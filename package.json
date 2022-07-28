@@ -1,0 +1,17 @@
+{
+  "name": "datadatechallenge_ameri",
+  "version": "1.0.0",
+  "dependencies": {
+    "-": "0.0.1",
+    "log4js": "^6.6.0",
+    "multi-key-cache": "^1.0.2",
+    "multikeymap": "^1.0.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nafas Ameri",
+  "license": "ISC",
+  "description": ""
+}
