@@ -6,8 +6,6 @@ const logger = log4js.getLogger();
 logger.level = 'debug';
 
 const port = process.env.port || 5000;
-const sample = fs.readFileSync('sample.json').toString();
-
 
 const server = http.createServer((req, res) => {
     // req.on('data', (chunk) => {
@@ -16,6 +14,7 @@ const server = http.createServer((req, res) => {
     // });
 
     if (req.url == '/search') {
+        const sample = fs.readFileSync('sample.json').toString();
         res.writeHead(200);
         res.write(sample);
         res.end();

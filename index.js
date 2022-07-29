@@ -6,9 +6,9 @@ logger.level = 'debug';
 
 // let Tags = prompt("Enter Tags: ");
 let Tags = JSON.stringify(['enc_base64', 'active']);
-let SortIndex = 1;
-let PageSize = 3;
-let PageIndex = 2;
+let SortIndex = 2;
+let PageSize = 4;
+let PageIndex = 6;
 
 ///// level 1
 let optionSearch = {
@@ -32,16 +32,22 @@ let reqSearch = http.request(optionSearch, (res) => {
 
         res.on('end', () => {
             ///// Sorting
-            // DataSet = DataSet.sort(a => a.Data);
+            // DataSet = DataSet.sort(a => a.Tags[SortIndex]);
             // logger.warn(DataSet);
+            sort(DataSet, SortIndex);
+            // quicksort(DataSet, 0, DataSet.length - 1);
             for (const data of DataSet) {
-                logger.info(data.Tags[SortIndex]);
+                try {
+                    logger.info(data.Tags);
+                } catch (ex) {
+                    logger.info(data);
+                }
             }
 
             ///// Paging
             let Pages = [];
             let len = Math.ceil(DataSet.length / PageSize);
-            logger.info("length of Pages = " + len)
+            logger.info(`length of Pages = ${len}`)
             for (let i = 0; i < len; i++) {
                 let Page = [];
                 for (let j = 0; j < PageSize; j++) {
@@ -52,7 +58,84 @@ let reqSearch = http.request(optionSearch, (res) => {
                 }
                 Pages[i] = Page;
             }
-            logger.info(Pages[PageIndex]);
+            if (len <= PageIndex)
+                logger.error(`length of Pages is ${len} enter PageIndex`)
+            else
+                logger.info(Pages[PageIndex]);
         });
     }
-}).end();
+});
+reqSearch.write(Tags);
+reqSearch.end();
+
+///// functions
+function swap(array, i, j) {
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+
+function sort(DataSet, SortIndex) {
+    let undefinedes = [];
+    for (let i = 0; i < DataSet.length; i++) {
+        for (let j = 0; j < DataSet.length; j++) {
+            try {
+                if (DataSet[i].Tags[SortIndex] != undefined) {
+                    if (DataSet[i].Tags[SortIndex] < DataSet[j].Tags[SortIndex])
+                        swap(DataSet, i, j);
+                } else {
+                    swap(DataSet, i, DataSet.length - 1);
+                    let temp = DataSet.pop();
+                    undefinedes.push(temp);
+                }
+            } catch (ex) {
+            }
+        }
+    }
+    for (const item of undefinedes) {
+        DataSet.push(item);
+    }
+    // logger.warn(undefinedes);
+}
+
+// It uses Dutch National Flag Algorithm
+function partition(a, low, high, i, j) {
+    // To handle 2 elements
+    if (high - low <= 1) {
+        if (a[high] < a[low])
+            swap(a, high, low);
+        i = low;
+        j = high;
+        return;
+    }
+
+    let mid = low;
+    let pivot = a[high];
+    while (mid <= high) {
+        if (a[mid] < pivot)
+            swap(a, low++, mid++);
+        else if (a[mid] == pivot)
+            mid++;
+        else if (a[mid] > pivot)
+            swap(a, mid, high--);
+    }
+
+    // update i and j
+    i = low - 1;
+    j = mid; // or high+1
+}
+
+// 3-way partition based quick sort
+function quicksort(a, low, high) {
+    if (low >= high) // 1 or 0 elements
+        return;
+
+    let i = low, j = high;
+
+    // Note that i and j are passed
+    partition(a, low, high, i, j);
+
+    // Recur two halves
+    quicksort(a, low, i);
+    quicksort(a, j, high);
+}
