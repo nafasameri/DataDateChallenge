@@ -4,7 +4,7 @@ const log4js = require('log4js');
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
-// let Tags = prompt("Enter Tags: ");
+
 let Tags = JSON.stringify(['enc_base64', 'active']);
 let SortIndex = 2;
 let PageSize = 4;
